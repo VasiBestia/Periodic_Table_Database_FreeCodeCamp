@@ -8,9 +8,10 @@ if [[ -z $1 ]]
     else
     if [[ $1 =~ ^[0-9]+$ ]]
         then
-        RETURN_RESULT=$($PSQL "Select e.atomic_number,e.name,e.symbol,p.type,p.atomic_mass,
+        RETURN_RESULT=$($PSQL "Select e.atomic_number,e.name,e.symbol,t.type,p.atomic_mass,
                               p.melting_point_celsius,p.boiling_point_celsius 
                               From elements e Join properties p on p.atomic_number=e.atomic_number
+                              Join types t on t.type_id=p.type_id
                               Where e.atomic_number=$1");
         if [[ -z $RETURN_RESULT ]]
               then
@@ -23,9 +24,10 @@ if [[ -z $1 ]]
               fi 
         elif [[ ${#1} -le 2 ]]
           then
-          RETURN_RESULT=$($PSQL "Select e.atomic_number,e.name,e.symbol,p.type,p.atomic_mass,
+          RETURN_RESULT=$($PSQL "Select e.atomic_number,e.name,e.symbol,t.type,p.atomic_mass,
                               p.melting_point_celsius,p.boiling_point_celsius 
                               From elements e Join properties p on p.atomic_number=e.atomic_number
+                              Join types t on t.type_id=p.type_id
                               Where e.symbol='$1'");
         if [[ -z $RETURN_RESULT ]]
               then
@@ -37,6 +39,11 @@ if [[ -z $1 ]]
               done
               fi 
         else
+        RETURN_RESULT=$($PSQL "Select e.atomic_number,e.name,e.symbol,t.type,p.atomic_mass,
+                              p.melting_point_celsius,p.boiling_point_celsius 
+                              From elements e Join properties p on p.atomic_number=e.atomic_number
+                              Join types t on t.type_id=p.type_id
+                              Where e.name='$1'");
         if [[ -z $RETURN_RESULT ]]
               then
               echo "I could not find that element in the database."
